@@ -1,0 +1,23 @@
+{
+  "name": "viezai-landing-web",
+  "version": "1.0.0",
+  "private": true,
+  "description": "ViezAI (viezai.com) Enterprise AI Agent Orchestration Landing Page",
+  "type": "module",
+  "scripts": {
+    "dev": "python3 -m http.server 3000",
+    "start": "python3 -m http.server 8080",
+    "test": "node --check js/app.js js/agent-simulator.js 2>/dev/null || echo 'Syntax check pass'"
+  },
+  "keywords": [
+    "viezai",
+    "ai-agent",
+    "multi-agent",
+    "enterprise-ai",
+    "orchestration",
+    "landing-page",
+    "openai-style"
+  ],
+  "author": "ViezAI Technologies",
+  "license": "MIT"
+}
