@@ -128,8 +128,31 @@ npm run preview
 
 ## 📦 Deployment
 
-### Deploy to Vercel / Cloudflare Pages / GitHub Pages
-Since ViezAI Landing Web builds into a pure static export (`dist/`), it can be deployed with zero backend configuration:
+### Run with Docker / GitHub Container Registry (GHCR)
+The repository automatically builds and publishes production multi-platform images (`linux/amd64`, `linux/arm64`) to **GitHub Container Registry (GHCR)** on every push to `main`.
+
+```bash
+# Pull the latest container image from GHCR
+docker pull ghcr.io/viezai/landing-web:latest
+
+# Run containerized Nginx web server
+docker run -d --name viezai-landing -p 8080:80 ghcr.io/viezai/landing-web:latest
+
+# Check health endpoint
+curl http://localhost:8080/healthz
+```
+
+### Build Docker Image Locally
+```bash
+# Build production multi-stage image
+docker build -t viezai-landing-web .
+
+# Run locally
+docker run -d -p 8080:80 viezai-landing-web
+```
+
+### Deploy to Vercel / Cloudflare Pages / Static CDN
+Since ViezAI Landing Web builds into a pure static export (`dist/`), it can also be deployed with zero backend configuration:
 - **Build Command**: `npm run build`
 - **Output Directory**: `dist`
 - **Node Version**: 20.x
