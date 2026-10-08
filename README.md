@@ -1,87 +1,141 @@
-# ViezAI Enterprise Landing Web (viezai.com)
+# ViezAI — Enterprise AI Agents Orchestration Platform
 
-Landing page doanh nghiệp cho **ViezAI** — Nền tảng & giải pháp **Enterprise Multi-Agent Orchestration & Automation**. Được thiết kế theo ngôn ngữ thẩm mỹ tối giản, sang trọng phong cách **OpenAI Aesthetic** (Dark theme `#000000`, viền mảnh `#262626`, typography tinh gọn, Bento Grid và Interactive Agent Simulator).
-
----
-
-## ✨ Điểm nổi bật & Tính năng
-
-1. **OpenAI Aesthetic Design Language**:
-   - Nền màu đen sâu (`#000000` / `#0a0a0c`), viền phân tách mỏng 1px (`#1e1e24` / `#27272f`).
-   - Subtle luminescence glow, badges trạng thái hoạt động với pulse animation.
-   - Typography hiện đại (Inter, JetBrains Mono) tương phản cao, dễ đọc.
-   - Thẻ Bento Grid tổ chức thông tin trực quan.
-
-2. **Interactive Agent Simulator & Live Showcase**:
-   - Mô phỏng thực tế cách các Agent chuyên trách phối hợp: **Planner Agent** -> **Coder Agent** -> **Security Agent** -> **Evaluator Agent**.
-   - 3 kịch bản thực tế doanh nghiệp:
-     - *Enterprise Bug Fix & Adversarial Review*
-     - *Automated Data Pipeline ETL (ClickHouse Vector Lake)*
-     - *Security Compliance CVE Audit & Remediation*
-   - Hỗ trợ xem từng bước, tự động phát (Auto-play) và xem log/syntax code thực tế.
-
-3. **Enterprise Security & Architecture**:
-   - Giới thiệu quy trình điều phối 4 bước: *Connect & Scope -> Decompose & Plan -> Parallel Execution -> Verify & Human Gate*.
-   - Khẳng định cam kết bảo mật: Private VPC, On-Premise Enclave, Taint analysis, Không dùng dữ liệu khách hàng để train public model.
-
-4. **Biểu mẫu Liên hệ & Thu thập Yêu cầu (Lead Capture)**:
-   - Client-side validation đầy đủ (Tên, Email doanh nghiệp, Tên công ty, Phân loại giải pháp).
-   - UX feedback mượt mà với thông báo xác nhận trực tiếp.
-
-5. **Hiệu năng & Khả năng Tương thích**:
-   - Zero external heavy dependencies (không bloatware).
-   - Tốc độ tải trang siêu tốc (< 1.2s), tối ưu SEO meta tags & OpenGraph.
-   - Responsive 100% trên thiết bị Mobile, Tablet và Desktop.
+> **viezai.com** — Production-grade Landing Page for ViezAI, specialized in autonomous multi-agent orchestration, deterministic software delivery pipelines, and enterprise-grade guardrails.
 
 ---
 
-## 📁 Cấu trúc Thư mục
+## ✦ Design Aesthetics & Tone
 
-```text
-landing-web/
-├── .github/
-│   └── workflows/
-│       └── deploy.yml          # Tự động deploy lên GitHub Pages
-├── assets/
-│   ├── favicon.svg             # Favicon vector
-│   └── logo.svg                # Logo ViezAI Enterprise
-├── css/
-│   └── styles.css              # Hệ thống biến CSS tokens & OpenAI dark theme
-├── js/
-│   ├── agent-simulator.js      # Dữ liệu kịch bản & state machine cho Simulator
-│   └── app.js                  # Điều khiển tương tác, accordion, form validation
-├── Dockerfile                  # Docker container image tối ưu với Nginx Alpine
-├── nginx.conf                  # Cấu hình Nginx với Gzip & Security Headers
-├── package.json                # Project manifest & dev scripts
-├── index.html                  # Giao diện chính Semantic HTML5
-└── README.md                   # Tài liệu hướng dẫn
-```
+Designed following the modern, minimalist aesthetic inspired by **OpenAI**:
+- **Palette**: Pitch Black backdrop (`#000000`, `#080808`, `#0c0c0c`), ultra-thin neutral borders (`#262626`, `#1f1f1f`), subtle emerald and white glows.
+- **Typography**: Clean, geometric sans-serif hierarchy powered by *Inter* & *JetBrains Mono* for telemetry and terminal outputs.
+- **Interactivity**: Micro-animations, live log streaming, multi-agent status transitions, and client-side validated lead capture.
+- **Performance**: Zero bulky runtime dependencies; built with Vite, React 19, TypeScript, and Tailwind CSS v4 for blazing-fast load times.
 
 ---
 
-## 🚀 Hướng dẫn Cài đặt & Chạy Local
+## 🏛️ Page Sections & Architecture
 
-### 1. Chạy nhanh bằng Python (Không cần cài thêm thư viện)
+1. **Header / Navigation (`Navbar.tsx`)**:
+   - Modern geometric brand mark & version pill (`v2.4`).
+   - Smooth anchor navigation: Solutions, Capabilities, Architecture, Metrics, Contact.
+   - Quick GitHub repo link and "Book a Demo" modal trigger.
+   - Responsive mobile navigation with backdrop blur.
+
+2. **Hero Section (`Hero.tsx`)**:
+   - Status badge: `ViezAI Swarm v2.4 — Deterministic Multi-Agent Runtime`.
+   - Clear value proposition: *"Enterprise AI Agents Orchestration Platform"*.
+   - Dual Call-to-Action: Primary direct booking + secondary interactive swarm simulator trigger.
+   - Enterprise assurance badges: 99.4% CI first-pass rate, SOC2 Type II, Zero data retention in transit, Self-hosted VPC native.
+
+3. **Multi-Agent Orchestration Simulator (`AgentSimulator.tsx`)**:
+   - Interactive visual canvas demonstrating how the Orchestrator coordinates 4 specialized agents:
+     - `@planner (Shikamaru)`: Task graph decomposition (DAG).
+     - `@coder (Kakashi)`: Isolated git worktree surgical changes & TDD.
+     - `@reviewer (Neji)`: Security static audit & guardrail enforcement.
+     - `@executor (Minato)`: Canary deployment & telemetry flush.
+   - Switchable task presets (*Refactor*, *Security Audit*, *A2A Migration*).
+   - Real-time animated status transitions (Pending -> Running -> Verified -> Shipped).
+
+4. **Core Solutions Bento Grid (`BentoGrid.tsx`)**:
+   - 4-card asymmetric bento layout:
+     - *Autonomous Multi-Agent Swarms* (A2A protocol, subagent fan-out, ephemeral worktrees).
+     - *Private LLM & VPC Isolation* (Air-gapped VPC, DLP PII redaction, mTLS encryption).
+     - *Enterprise Integration Engine* (GitHub, GitLab, Jira, Linear, Postgres, Snowflake, Datadog).
+     - *Real-Time Observability & Continuous Evaluation* (OpenTelemetry traces, reasoning steps, automated regression suites).
+
+5. **Interactive Agent Showcase (`InteractiveTerminal.tsx`)**:
+   - Monospace developer console with tab switching across agent roles.
+   - One-click live log streaming simulation with realistic execution timestamps and log levels (`agent`, `info`, `success`).
+   - Command snippet copy-to-clipboard functionality.
+
+6. **Why ViezAI / 4-Stage Architecture (`Architecture.tsx`)**:
+   - Systematic breakdown of the ViezAI execution lifecycle:
+     - `01. Ingest`: Knowledge graph, AST mapping, and hybrid semantic retrieval.
+     - `02. Plan`: Deterministic Directed Acyclic Graph (DAG) with token ceilings.
+     - `03. Execute`: Isolated ephemeral git worktrees in gVisor sandboxes.
+     - `04. Guardrails`: Adversarial dual-skeptic verification and zero-leakage security gates.
+
+7. **Enterprise Benchmarks & Compliance (`Metrics.tsx`)**:
+   - 10M+ Tasks executed autonomously.
+   - 99.4% CI first-pass success rate.
+   - 12x Faster cycle from spec to production pull request.
+   - < 45ms Orchestration overhead.
+
+8. **Lead Capture & Consultation Form (`ContactSection.tsx` & `ContactModal.tsx`)**:
+   - Enterprise consultation booking form.
+   - Client-side validation: Full Name, Business Email format, Company Name, Team Size, Deployment Mode.
+   - Simulated 2-hour SLA response feedback and success state.
+   - Reusable popup modal triggerable from anywhere on the page.
+
+9. **Footer (`Footer.tsx`)**:
+   - Comprehensive site map, resources, and compliance certifications.
+   - Real-time pulsing system status: *"All Systems Operational (99.99%)"*.
+
+---
+
+## 🛠️ Tech Stack
+
+- **Framework**: [React 19](https://react.dev/) + [Vite 6](https://vitejs.dev/)
+- **Language**: [TypeScript 5+](https://www.typescriptlang.org/)
+- **Styling**: [Tailwind CSS v4](https://tailwindcss.com/) with `@tailwindcss/vite`
+- **Icons**: [Lucide React](https://lucide.dev/)
+- **Testing**: [Vitest](https://vitest.dev/)
+- **CI/CD**: GitHub Actions (`.github/workflows/ci.yml`)
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js 20.x or higher
+- npm, pnpm, or yarn
+
+### Installation
 ```bash
-# Trong thư mục dự án:
-python3 -m http.server 3000
-```
-Mở trình duyệt tại: `http://localhost:3000`
+# Clone the repository
+git clone https://github.com/viezai/landing-web.git
+cd landing-web
 
-### 2. Chạy với Docker
+# Install dependencies
+npm install
+```
+
+### Local Development
 ```bash
-# Build Docker image
-docker build -t viezai-landing-web:latest .
-
-# Run container
-docker run -d -p 8080:80 --name viezai-landing viezai-landing-web:latest
+npm run dev
 ```
-Mở trình duyệt tại: `http://localhost:8080`
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-### 3. Deploy lên GitHub Pages
-Dự án đã tích hợp sẵn GitHub Actions tại `.github/workflows/deploy.yml`. Khi push lên nhánh `main`, hệ thống sẽ tự động kích hoạt workflow và xuất bản trang web.
+### Typecheck & Unit Tests
+```bash
+# Run TypeScript validation and Vitest test suite
+npm test
+```
+
+### Production Build
+```bash
+npm run build
+```
+The optimized static build will be generated in the `dist/` directory, ready to deploy to any CDN or web server (Vercel, Cloudflare Pages, AWS CloudFront, Nginx).
+
+### Preview Production Build
+```bash
+npm run preview
+```
 
 ---
 
-## 🛡️ Giấy phép & Bản quyền
-Bản quyền © 2026 **ViezAI Technologies Inc.** (viezai.com). Mọi quyền được bảo lưu.
+## 📦 Deployment
+
+### Deploy to Vercel / Cloudflare Pages / GitHub Pages
+Since ViezAI Landing Web builds into a pure static export (`dist/`), it can be deployed with zero backend configuration:
+- **Build Command**: `npm run build`
+- **Output Directory**: `dist`
+- **Node Version**: 20.x
+
+---
+
+## 🛡️ License
+
+Copyright © 2026 ViezAI, Inc. All rights reserved.

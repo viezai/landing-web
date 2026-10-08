@@ -1,23 +1,46 @@
 {
   "name": "viezai-landing-web",
   "version": "1.0.0",
-  "private": true,
-  "description": "ViezAI (viezai.com) Enterprise AI Agent Orchestration Landing Page",
   "type": "module",
   "scripts": {
-    "dev": "python3 -m http.server 3000",
-    "start": "python3 -m http.server 8080",
-    "test": "node --check js/app.js js/agent-simulator.js 2>/dev/null || echo 'Syntax check pass'"
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "test": "tsc --noEmit && vitest run",
+    "test:unit": "vitest run"
   },
   "keywords": [
     "viezai",
-    "ai-agent",
-    "multi-agent",
-    "enterprise-ai",
+    "ai-agents",
     "orchestration",
-    "landing-page",
-    "openai-style"
+    "multi-agent",
+    "openai-style",
+    "enterprise"
   ],
-  "author": "ViezAI Technologies",
-  "license": "MIT"
+  "author": "ViezAI Engineering Team",
+  "license": "ISC",
+  "description": "ViezAI Enterprise AI Agents Landing Page",
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.3.3",
+    "@testing-library/dom": "^10.4.2",
+    "@testing-library/react": "^16.3.3",
+    "@types/node": "^26.6.4",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^4.7.0",
+    "autoprefixer": "^10.6.1",
+    "jsdom": "^27.0.1",
+    "postcss": "^8.5.29",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^7.0.2",
+    "vite": "^6.4.4",
+    "vitest": "^4.1.11"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "lucide-react": "^1.53.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "tailwind-merge": "^3.7.0"
+  }
 }
