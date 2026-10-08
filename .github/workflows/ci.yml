@@ -79,3 +79,20 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+  deploy:
+    name: Trigger Easypanel Deployment
+    needs: [publish-image]
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request'
+
+    steps:
+      - name: Trigger Easypanel Webhook
+        env:
+          EASYPANEL_WEBHOOK_URL: ${{ secrets.EASYPANEL_WEBHOOK_URL || 'http://103.77.240.51:3000/api/deploy/322f13c72905727afe5a828b01c82df0ff702135ab04ec31' }}
+        run: |
+          echo "Calling Easypanel deployment webhook..."
+          curl -sS -X POST "$EASYPANEL_WEBHOOK_URL" --fail-with-body --retry 3 --max-time 30
+          echo ""
+          echo "Easypanel deployment triggered successfully!"
+
