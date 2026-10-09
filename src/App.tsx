@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
+import { HarnessShowcase } from './components/HarnessShowcase';
+import { AppsShowcase } from './components/AppsShowcase';
 import { AgentSimulator } from './components/AgentSimulator';
 import { BentoGrid } from './components/BentoGrid';
 import { InteractiveTerminal } from './components/InteractiveTerminal';
@@ -39,6 +41,8 @@ export const App: React.FC = () => {
           onOpenDemoModal={handleOpenDemoModal}
           onScrollToTerminal={handleScrollToTerminal}
         />
+        <HarnessShowcase />
+        <AppsShowcase />
         <AgentSimulator />
         <BentoGrid />
         <InteractiveTerminal />

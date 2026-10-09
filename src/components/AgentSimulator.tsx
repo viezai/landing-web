@@ -1,300 +1,408 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import {
   Play,
   RotateCcw,
   CheckCircle2,
-  Clock,
-  Cpu,
-  GitBranch,
-  ShieldCheck,
-  Zap,
-  Layers,
-  ArrowRight,
-  Database
+  LayoutGrid,
+  MessageSquare
 } from 'lucide-react';
 
-interface AgentNode {
+interface KanbanCard {
   id: string;
+  title: string;
+  epic: string;
+  agent: string;
+  runtime: string;
+  column: 'backlog' | 'progress' | 'review' | 'done';
+  tokens: string;
+  worktree: string;
+}
+
+interface ChatMessage {
+  id: string;
+  time: string;
+  agent: string;
   role: string;
-  name: string;
-  task: string;
-  duration: string;
-  status: 'idle' | 'running' | 'completed';
-  icon: typeof Cpu;
-  color: string;
+  runtimeBadge: string;
+  message: string;
+  status: 'planning' | 'running' | 'success' | 'verified';
 }
 
 export const AgentSimulator: React.FC = () => {
   const [isRunning, setIsRunning] = useState(false);
-  const [currentStep, setCurrentStep] = useState<number>(0);
-  const [activeTaskKey, setActiveTaskKey] = useState<'refactor' | 'security' | 'migration'>('refactor');
+  const [activeStep, setActiveStep] = useState(0);
+  const [selectedScenario, setSelectedScenario] = useState<'a2a' | 'runtime_swap' | 'security'>('a2a');
 
-  const taskPresets = {
-    refactor: {
-      title: 'Monorepo Migration & Zero-Downtime Cache Refactor',
-      scope: '32 files across @core, @api, and @web services',
-      budget: '45,000 tokens',
+  const scenarios = {
+    a2a: {
+      name: 'A2A Task Delegation & Worktree Isolation',
+      desc: 'Gaia orchestrates a full-stack refactor across @planner, @coder, and @reviewer via A2A JSON-RPC.',
+    },
+    runtime_swap: {
+      name: 'Live Harness Runtime Hot-Swap',
+      desc: 'Seamlessly migrating a running session from DeepSeek (dsh) to Claude Code (claude_runtime) mid-flight.',
     },
     security: {
-      title: 'Automated PII Leak Audit & Cryptographic Rotation',
-      scope: 'PostgreSQL schema + JWT authentication middleware',
-      budget: '32,000 tokens',
-    },
-    migration: {
-      title: 'Full-Stack A2A Protocol Implementation (v2.4 Spec)',
-      scope: 'Autonomous subagent message broker & SQLite backend',
-      budget: '60,000 tokens',
+      name: 'Bring-Your-Own MCP Zero-Leakage Gate',
+      desc: 'Consumer app provides ephemeral user tokens; harness executes turn without persistent credential storage.',
     },
   };
 
-  const agents: AgentNode[] = [
+  const cards: KanbanCard[] = [
     {
-      id: 'planner',
-      role: 'Lead Architect',
-      name: '@planner (Shikamaru)',
-      task: 'Parse technical specs, decompose AST dependencies & generate deterministic DAG',
-      duration: '420ms',
-      status: currentStep > 0 ? (currentStep === 1 ? 'running' : 'completed') : 'idle',
-      icon: Layers,
-      color: 'text-amber-400 border-amber-500/30 bg-amber-500/10',
+      id: 'CRD-101',
+      title: 'Decompose Monorepo AST & Map Dependencies',
+      epic: 'ViezAgent Core',
+      agent: '@gaia (Master Agent)',
+      runtime: 'agentscope',
+      column: 'done',
+      tokens: '4,200 tk',
+      worktree: '.worktrees/spec-map',
     },
     {
-      id: 'coder',
-      role: 'Staff Engineer',
-      name: '@coder (Kakashi)',
-      task: 'Generate minimal changes, implement TDD suites, isolate changes in git worktree',
-      duration: '890ms',
-      status: currentStep > 1 ? (currentStep === 2 ? 'running' : 'completed') : 'idle',
-      icon: GitBranch,
-      color: 'text-cyan-400 border-cyan-500/30 bg-cyan-500/10',
+      id: 'CRD-102',
+      title: 'A2A JSON-RPC Protocol Dispatch Handler',
+      epic: 'Kanban Backend',
+      agent: '@coder (Lead Engineer)',
+      runtime: 'claude_runtime',
+      column: 'progress',
+      tokens: '18,500 tk',
+      worktree: '.worktrees/a2a-dispatch',
     },
     {
-      id: 'reviewer',
-      role: 'Security Gate',
-      name: '@reviewer (Neji)',
-      task: 'Run static CVE audit, verify memory bounds & assert zero data leakage guardrails',
-      duration: '310ms',
-      status: currentStep > 2 ? (currentStep === 3 ? 'running' : 'completed') : 'idle',
-      icon: ShieldCheck,
-      color: 'text-emerald-400 border-emerald-500/30 bg-emerald-500/10',
+      id: 'CRD-103',
+      title: 'Surgical Codex Diff Patching & Unit Tests',
+      epic: 'Harness Adapter',
+      agent: '@patcher (Codex Runner)',
+      runtime: 'codex_runtime',
+      column: 'review',
+      tokens: '12,400 tk',
+      worktree: '.worktrees/patch-eval',
     },
     {
-      id: 'executor',
-      role: 'Deploy Orchestrator',
-      name: '@executor (Minato)',
-      task: 'Pass canary health metrics, telemetry flush & automated pull request submission',
-      duration: '180ms',
-      status: currentStep > 3 ? 'completed' : (currentStep === 3 ? 'running' : 'idle'),
-      icon: Zap,
-      color: 'text-violet-400 border-violet-500/30 bg-violet-500/10',
+      id: 'CRD-104',
+      title: 'Ephemeral User MCP Tool Verification Gate',
+      epic: 'Security Gate',
+      agent: '@skeptic (Verifier)',
+      runtime: 'antigravity_runtime',
+      column: 'backlog',
+      tokens: '8,900 tk',
+      worktree: '.worktrees/sec-gate',
     },
   ];
 
-  const handleStart = () => {
+  const chatLogs: ChatMessage[] = [
+    {
+      id: '1',
+      time: '14:32:01',
+      agent: '@gaia',
+      role: 'Master Agent',
+      runtimeBadge: 'Platform Core',
+      message: 'Received new epic from consumer app SpyX. Decomposed into 4 isolated worktrees via A2A protocol.',
+      status: 'planning',
+    },
+    {
+      id: '2',
+      time: '14:32:03',
+      agent: '@coder',
+      role: 'Engineering Lead',
+      runtimeBadge: 'claude_runtime (Port 4349)',
+      message: 'Mounted ephemeral git worktree at .worktrees/a2a-dispatch. Running AST validation and applying patch.',
+      status: 'running',
+    },
+    {
+      id: '3',
+      time: '14:32:05',
+      agent: '@patcher',
+      role: 'Codex Engine',
+      runtimeBadge: 'codex_runtime (Port 4350)',
+      message: 'Generated unified diff via Responses API. All 42 vitest assertions passed. Zero side-effects.',
+      status: 'success',
+    },
+    {
+      id: '4',
+      time: '14:32:07',
+      agent: '@skeptic',
+      role: 'Security Gatekeeper',
+      runtimeBadge: 'antigravity_runtime (Port 4354)',
+      message: 'Static analysis clean: 0 secret leaks, 0 unpinned dependencies. Ready for merge into main branch.',
+      status: 'verified',
+    },
+  ];
+
+  // Simulation execution loop
+  useEffect(() => {
+    let timer: ReturnType<typeof setInterval>;
+    if (isRunning) {
+      timer = setInterval(() => {
+        setActiveStep((prev) => {
+          if (prev >= 3) {
+            setIsRunning(false);
+            return 3;
+          }
+          return prev + 1;
+        });
+      }, 1800);
+    }
+    return () => clearInterval(timer);
+  }, [isRunning]);
+
+  const handleStartSimulation = () => {
+    setActiveStep(0);
     setIsRunning(true);
-    setCurrentStep(1);
   };
 
   const handleReset = () => {
     setIsRunning(false);
-    setCurrentStep(0);
+    setActiveStep(0);
   };
 
-  useEffect(() => {
-    if (!isRunning) return;
-
-    if (currentStep >= 1 && currentStep < 4) {
-      const timer = setTimeout(() => {
-        setCurrentStep((prev) => prev + 1);
-      }, 1200);
-      return () => clearTimeout(timer);
-    } else if (currentStep === 4) {
-      setIsRunning(false);
-    }
-  }, [isRunning, currentStep]);
-
   return (
-    <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 -mt-6 mb-16">
-      <div className="rounded-xl border border-neutral-800 bg-[#090909] p-4 sm:p-6 shadow-2xl relative overflow-hidden">
-        {/* Top Control Bar */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-neutral-800">
-          <div className="flex items-center gap-3">
-            <div className="flex h-3 w-3 space-x-1.5">
-              <span className="h-2.5 w-2.5 rounded-full bg-neutral-700" />
-              <span className="h-2.5 w-2.5 rounded-full bg-neutral-700" />
-              <span className="h-2.5 w-2.5 rounded-full bg-neutral-700" />
-            </div>
-            <span className="text-xs font-mono text-neutral-400">
-              Orchestrator Simulation Canvas :: <span className="text-white font-medium">Multi-Agent Swarm</span>
-            </span>
+    <section id="kanban" className="py-24 border-b border-neutral-900 bg-[#020202]">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        {/* Section Header */}
+        <div className="max-w-3xl mb-12">
+          <div className="inline-flex items-center gap-1.5 text-xs font-mono text-emerald-400 uppercase tracking-widest mb-3">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_#34d399]" />
+            Live Preview: viezagent-kanban
           </div>
+          <h2 className="text-3xl sm:text-5xl font-semibold tracking-tight text-white leading-tight">
+            Agent Teams in Action.
+            <br />
+            <span className="text-neutral-500">Kanban coordination meets A2A roleplay.</span>
+          </h2>
+          <p className="mt-4 text-neutral-400 text-base sm:text-lg leading-relaxed">
+            Experience how autonomous agents organize work on the ViezAI Kanban board. 
+            Tasks are dispatched via A2A JSON-RPC, worked on in sandboxed git worktrees, and reviewed in real-time.
+          </p>
+        </div>
 
-          {/* Preset Selector */}
-          <div className="flex items-center gap-2">
-            <div className="inline-flex rounded-lg bg-neutral-950 p-1 border border-neutral-800 text-xs">
-              {(['refactor', 'security', 'migration'] as const).map((key) => (
-                <button
-                  key={key}
-                  onClick={() => {
-                    setActiveTaskKey(key);
-                    handleReset();
-                  }}
-                  className={`px-2.5 py-1 rounded capitalize transition-all ${
-                    activeTaskKey === key
-                      ? 'bg-neutral-800 text-white font-medium shadow'
-                      : 'text-neutral-400 hover:text-neutral-200'
-                  }`}
-                >
-                  {key}
-                </button>
-              ))}
-            </div>
-
-            {/* Run / Reset Trigger */}
-            {currentStep === 4 ? (
+        {/* Simulation Controls */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-6 gap-4">
+          {/* Scenario Selector */}
+          <div className="flex flex-wrap gap-2">
+            {(Object.keys(scenarios) as (keyof typeof scenarios)[]).map((key) => (
               <button
-                onClick={handleReset}
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded bg-neutral-800 hover:bg-neutral-700 text-xs text-white font-mono transition-colors"
-              >
-                <RotateCcw className="w-3 h-3 text-neutral-300" />
-                Reset
-              </button>
-            ) : (
-              <button
-                onClick={handleStart}
-                disabled={isRunning}
-                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded text-xs font-mono text-white transition-all ${
-                  isRunning
-                    ? 'bg-neutral-800 text-neutral-400 cursor-not-allowed'
-                    : 'bg-emerald-600 hover:bg-emerald-500 shadow-sm shadow-emerald-950'
+                key={key}
+                onClick={() => {
+                  setSelectedScenario(key);
+                  handleReset();
+                }}
+                className={`px-3 py-1.5 text-xs font-mono rounded-md transition-all ${
+                  selectedScenario === key
+                    ? 'bg-neutral-200 text-black font-medium'
+                    : 'bg-neutral-900 text-neutral-400 hover:text-white hover:bg-neutral-850'
                 }`}
               >
-                <Play className="w-3 h-3 fill-white" />
-                {isRunning ? 'Orchestrating...' : 'Run Swarm'}
+                {scenarios[key].name}
               </button>
-            )}
+            ))}
+          </div>
+
+          {/* Action triggers */}
+          <div className="flex items-center gap-3 w-full sm:w-auto">
+            <button
+              onClick={handleStartSimulation}
+              disabled={isRunning}
+              className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 rounded-md bg-emerald-500 px-4 py-2 text-xs font-semibold text-black transition-all hover:bg-emerald-400 active:scale-[0.98] disabled:opacity-50 shadow-[0_0_15px_rgba(16,185,129,0.2)]"
+            >
+              {isRunning ? (
+                <>
+                  <span className="w-3.5 h-3.5 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                  <span>Executing Swarm Turn...</span>
+                </>
+              ) : (
+                <>
+                  <Play className="w-3.5 h-3.5 fill-current" />
+                  <span>Run Live A2A Simulation</span>
+                </>
+              )}
+            </button>
+
+            <button
+              onClick={handleReset}
+              className="inline-flex items-center justify-center p-2 rounded-md border border-neutral-800 bg-neutral-900 text-neutral-400 hover:text-white hover:bg-neutral-800 transition-colors"
+              title="Reset Simulation"
+            >
+              <RotateCcw className="w-4 h-4" />
+            </button>
           </div>
         </div>
 
-        {/* Task Objective Banner */}
-        <div className="my-4 p-3 rounded-lg bg-neutral-950/80 border border-neutral-850 flex flex-col md:flex-row md:items-center justify-between gap-2 text-xs">
-          <div className="flex items-center gap-2">
-            <span className="px-2 py-0.5 rounded bg-neutral-900 border border-neutral-800 text-neutral-300 font-mono text-[11px]">
-              Active Spec
-            </span>
-            <span className="text-white font-medium">{taskPresets[activeTaskKey].title}</span>
+        {/* Interactive Kanban Board Interface */}
+        <div className="rounded-2xl border border-neutral-800 bg-[#070707] p-4 sm:p-6 mb-8 overflow-hidden">
+          <div className="flex items-center justify-between pb-4 mb-4 border-b border-neutral-850 text-xs font-mono">
+            <div className="flex items-center gap-2 text-neutral-300">
+              <LayoutGrid className="w-4 h-4 text-blue-400" />
+              <span className="font-semibold text-white">Board: viezagent-kanban / core-sprint-14</span>
+              <span className="text-neutral-600 hidden md:inline">|</span>
+              <span className="text-emerald-400 hidden md:inline">A2A Broker: ONLINE</span>
+            </div>
+            <div className="flex items-center gap-2 text-neutral-400">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span>Harness Adapter Sync: OK</span>
+            </div>
           </div>
-          <div className="flex items-center gap-4 text-neutral-400 font-mono text-[11px]">
-            <span>Scope: <span className="text-neutral-300">{taskPresets[activeTaskKey].scope}</span></span>
-            <span>Target Budget: <span className="text-emerald-400">{taskPresets[activeTaskKey].budget}</span></span>
-          </div>
-        </div>
 
-        {/* Multi-Agent Orchestration Visual Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-3 my-4">
-          {agents.map((agent, index) => {
-            const Icon = agent.icon;
-            return (
-              <div
-                key={agent.id}
-                className={`relative rounded-lg p-4 border transition-all duration-300 ${
-                  agent.status === 'running'
-                    ? 'border-emerald-500/60 bg-neutral-900/90 shadow-lg shadow-emerald-950/20 ring-1 ring-emerald-500/30'
-                    : agent.status === 'completed'
-                    ? 'border-neutral-800 bg-neutral-950/90 text-neutral-300'
-                    : 'border-neutral-850 bg-neutral-950/40 opacity-70'
-                }`}
-              >
-                {/* Step indicator */}
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-500">
-                    Phase 0{index + 1}
-                  </span>
-                  {agent.status === 'completed' && (
-                    <span className="inline-flex items-center gap-1 text-[11px] font-mono text-emerald-400">
-                      <CheckCircle2 className="w-3 h-3" />
-                      Passed
-                    </span>
-                  )}
-                  {agent.status === 'running' && (
-                    <span className="inline-flex items-center gap-1 text-[11px] font-mono text-amber-400 animate-pulse">
-                      <Clock className="w-3 h-3" />
-                      Working...
-                    </span>
-                  )}
-                  {agent.status === 'idle' && (
-                    <span className="text-[11px] font-mono text-neutral-600">Pending</span>
-                  )}
-                </div>
-
-                {/* Agent Header */}
-                <div className="flex items-center gap-2 mb-2">
-                  <div className={`p-1.5 rounded border ${agent.color}`}>
-                    <Icon className="w-3.5 h-3.5" />
-                  </div>
-                  <div>
-                    <h3 className="text-xs font-semibold text-white tracking-tight">{agent.name}</h3>
-                    <p className="text-[10px] text-neutral-400">{agent.role}</p>
-                  </div>
-                </div>
-
-                {/* Agent Task Description */}
-                <p className="text-[11px] text-neutral-300 leading-snug min-h-[36px]">
-                  {agent.task}
-                </p>
-
-                {/* Footer Metrics */}
-                <div className="mt-3 pt-2.5 border-t border-neutral-900 flex items-center justify-between text-[10px] font-mono text-neutral-500">
-                  <span>Execution: {agent.duration}</span>
-                  <span className="text-neutral-400">Isolation: Worktree</span>
-                </div>
-
-                {/* Animated Arrow Connector (Desktop) */}
-                {index < 3 && (
-                  <div className="hidden md:flex absolute -right-3 top-1/2 -translate-y-1/2 z-10 w-6 h-6 rounded-full bg-neutral-900 border border-neutral-800 items-center justify-center text-neutral-500">
-                    <ArrowRight className="w-3 h-3" />
-                  </div>
-                )}
+          {/* 4 Kanban Columns */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* Column 1: Backlog */}
+            <div className="rounded-xl bg-black/60 border border-neutral-850/80 p-3.5 flex flex-col min-h-[260px]">
+              <div className="flex items-center justify-between text-xs font-mono text-neutral-400 mb-3 pb-2 border-b border-neutral-900">
+                <span className="font-semibold text-neutral-300">01. Backlog</span>
+                <span className="bg-neutral-900 px-1.5 py-0.5 rounded text-[10px]">1</span>
               </div>
-            );
-          })}
+              <div className="space-y-2.5">
+                {cards
+                  .filter((c) => c.column === 'backlog')
+                  .map((card) => (
+                    <div
+                      key={card.id}
+                      className="p-3 rounded-lg bg-neutral-900/80 border border-neutral-800 text-xs hover:border-neutral-700 transition-all"
+                    >
+                      <div className="flex items-center justify-between text-[10px] font-mono text-neutral-500 mb-1.5">
+                        <span className="text-emerald-400">{card.id}</span>
+                        <span>{card.tokens}</span>
+                      </div>
+                      <h4 className="text-neutral-200 font-medium mb-2 leading-snug">{card.title}</h4>
+                      <div className="flex items-center justify-between text-[10px] font-mono pt-1.5 border-t border-neutral-850 text-neutral-400">
+                        <span>{card.agent}</span>
+                        <span className="text-purple-400">{card.runtime}</span>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            </div>
+
+            {/* Column 2: In Progress (Worktree Sandboxes) */}
+            <div className="rounded-xl bg-black/60 border border-neutral-850/80 p-3.5 flex flex-col min-h-[260px]">
+              <div className="flex items-center justify-between text-xs font-mono text-neutral-400 mb-3 pb-2 border-b border-neutral-900">
+                <span className="font-semibold text-blue-400">02. In Worktree</span>
+                <span className="bg-blue-950/60 text-blue-400 px-1.5 py-0.5 rounded text-[10px] border border-blue-900/40">1 ACTIVE</span>
+              </div>
+              <div className="space-y-2.5">
+                {cards
+                  .filter((c) => c.column === 'progress')
+                  .map((card) => (
+                    <div
+                      key={card.id}
+                      className="p-3 rounded-lg bg-blue-950/20 border border-blue-900/50 text-xs shadow-[0_0_12px_rgba(59,130,246,0.08)]"
+                    >
+                      <div className="flex items-center justify-between text-[10px] font-mono text-blue-300 mb-1.5">
+                        <span className="font-semibold">{card.id}</span>
+                        <span className="flex items-center gap-1 text-emerald-400">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                          Streaming
+                        </span>
+                      </div>
+                      <h4 className="text-white font-medium mb-2 leading-snug">{card.title}</h4>
+                      <div className="bg-black/80 p-1.5 rounded font-mono text-[10px] text-neutral-400 mb-2">
+                        Worktree: <span className="text-emerald-300">{card.worktree}</span>
+                      </div>
+                      <div className="flex items-center justify-between text-[10px] font-mono pt-1.5 border-t border-blue-900/40 text-neutral-300">
+                        <span>{card.agent}</span>
+                        <span className="text-blue-400 font-semibold">{card.runtime}</span>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            </div>
+
+            {/* Column 3: Review & Security Gate */}
+            <div className="rounded-xl bg-black/60 border border-neutral-850/80 p-3.5 flex flex-col min-h-[260px]">
+              <div className="flex items-center justify-between text-xs font-mono text-neutral-400 mb-3 pb-2 border-b border-neutral-900">
+                <span className="font-semibold text-purple-400">03. Review & Gate</span>
+                <span className="bg-neutral-900 px-1.5 py-0.5 rounded text-[10px]">1</span>
+              </div>
+              <div className="space-y-2.5">
+                {cards
+                  .filter((c) => c.column === 'review')
+                  .map((card) => (
+                    <div
+                      key={card.id}
+                      className="p-3 rounded-lg bg-neutral-900/80 border border-purple-900/40 text-xs hover:border-purple-700/60 transition-all"
+                    >
+                      <div className="flex items-center justify-between text-[10px] font-mono text-purple-300 mb-1.5">
+                        <span>{card.id}</span>
+                        <span>{card.tokens}</span>
+                      </div>
+                      <h4 className="text-neutral-200 font-medium mb-2 leading-snug">{card.title}</h4>
+                      <div className="flex items-center justify-between text-[10px] font-mono pt-1.5 border-t border-neutral-850 text-neutral-400">
+                        <span>{card.agent}</span>
+                        <span className="text-purple-400">{card.runtime}</span>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            </div>
+
+            {/* Column 4: Done / Synthesized */}
+            <div className="rounded-xl bg-black/60 border border-neutral-850/80 p-3.5 flex flex-col min-h-[260px]">
+              <div className="flex items-center justify-between text-xs font-mono text-neutral-400 mb-3 pb-2 border-b border-neutral-900">
+                <span className="font-semibold text-emerald-400">04. Done / PR</span>
+                <span className="bg-emerald-950/60 text-emerald-400 px-1.5 py-0.5 rounded text-[10px] border border-emerald-900/40">PASSED</span>
+              </div>
+              <div className="space-y-2.5">
+                {cards
+                  .filter((c) => c.column === 'done')
+                  .map((card) => (
+                    <div
+                      key={card.id}
+                      className="p-3 rounded-lg bg-emerald-950/10 border border-emerald-900/40 text-xs"
+                    >
+                      <div className="flex items-center justify-between text-[10px] font-mono text-emerald-400 mb-1.5">
+                        <span>{card.id}</span>
+                        <span className="flex items-center gap-1">
+                          <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                          Merged
+                        </span>
+                      </div>
+                      <h4 className="text-neutral-300 font-medium mb-2 leading-snug">{card.title}</h4>
+                      <div className="flex items-center justify-between text-[10px] font-mono pt-1.5 border-t border-emerald-900/30 text-neutral-400">
+                        <span>{card.agent}</span>
+                        <span className="text-emerald-400">{card.runtime}</span>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Real-time Status Telemetry Bar */}
-        <div className="rounded-lg bg-neutral-950 p-3 border border-neutral-850 flex flex-wrap items-center justify-between gap-4 text-xs font-mono">
-          <div className="flex items-center gap-2">
-            <span className="relative flex h-2 w-2">
-              <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${
-                currentStep === 4 ? 'bg-emerald-400' : isRunning ? 'bg-amber-400' : 'bg-neutral-600'
-              }`} />
-              <span className={`relative inline-flex rounded-full h-2 w-2 ${
-                currentStep === 4 ? 'bg-emerald-500' : isRunning ? 'bg-amber-500' : 'bg-neutral-600'
-              }`} />
-            </span>
-            <span className="text-neutral-400">
-              State: {' '}
-              <span className="text-white font-medium">
-                {currentStep === 0 && 'Ready to Orchestrate'}
-                {currentStep === 1 && 'Decomposing Task Graph via @planner'}
-                {currentStep === 2 && 'Executing Diff & Writing Tests via @coder'}
-                {currentStep === 3 && 'Verifying Strict Guardrails via @reviewer'}
-                {currentStep === 4 && 'Execution Succeeded (All Checkpoints Verified)'}
-              </span>
+        {/* Live A2A Roleplay Group Chat & Event Stream */}
+        <div className="rounded-2xl border border-neutral-800 bg-[#080808] p-4 sm:p-6">
+          <div className="flex items-center justify-between pb-3 mb-4 border-b border-neutral-850">
+            <div className="flex items-center gap-2 text-xs font-mono text-neutral-300">
+              <MessageSquare className="w-4 h-4 text-emerald-400" />
+              <span className="font-semibold text-white">Live Roleplay Group Thread (A2A Protocol Stream)</span>
+            </div>
+            <span className="text-[11px] font-mono text-neutral-500">
+              Human-in-the-Loop Supervision: Enabled
             </span>
           </div>
 
-          <div className="flex items-center gap-4 text-[11px] text-neutral-500">
-            <div className="flex items-center gap-1">
-              <Database className="w-3 h-3 text-neutral-400" />
-              <span>A2A Sync: Active</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <ShieldCheck className="w-3 h-3 text-emerald-400" />
-              <span>Guardrails: 100% Enforced</span>
-            </div>
+          <div className="space-y-3 font-mono text-xs">
+            {chatLogs.slice(0, Math.max(2, activeStep + 1)).map((log) => (
+              <div
+                key={log.id}
+                className="p-3 rounded-lg bg-black border border-neutral-850 flex flex-col md:flex-row md:items-center justify-between gap-2"
+              >
+                <div className="flex items-start md:items-center gap-3">
+                  <span className="text-neutral-500 text-[11px] shrink-0">{log.time}</span>
+                  <span className="text-emerald-400 font-semibold shrink-0">{log.agent}</span>
+                  <span className="text-neutral-400 text-xs leading-relaxed">{log.message}</span>
+                </div>
+                <div className="shrink-0 flex items-center gap-2 self-end md:self-auto">
+                  <span className="px-2 py-0.5 rounded bg-neutral-900 border border-neutral-800 text-[10px] text-neutral-300">
+                    {log.runtimeBadge}
+                  </span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_#34d399]" />
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import {
   Send,
   CheckCircle2,
@@ -7,7 +7,11 @@ import {
   Mail,
   User,
   MessageSquare,
-  AlertCircle
+  AlertCircle,
+  Copy,
+  Check,
+  Lock,
+  ExternalLink
 } from 'lucide-react';
 
 interface ContactFormData {
@@ -38,6 +42,13 @@ export const ContactSection: React.FC = () => {
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
+  const [copiedEmail, setCopiedEmail] = useState<boolean>(false);
+
+  const handleCopyEmail = () => {
+    navigator.clipboard.writeText('support@viezai.com');
+    setCopiedEmail(true);
+    setTimeout(() => setCopiedEmail(false), 2500);
+  };
 
   const validate = (): boolean => {
     const errs: FormErrors = {};
@@ -65,257 +76,281 @@ export const ContactSection: React.FC = () => {
     if (!validate()) return;
 
     setIsSubmitting(true);
-
-    // Simulate reliable API call
     setTimeout(() => {
       setIsSubmitting(false);
       setIsSubmitted(true);
-    }, 1200);
-  };
-
-  const handleReset = () => {
-    setFormData({
-      fullName: '',
-      workEmail: '',
-      companyName: '',
-      teamSize: '21-100',
-      deploymentMode: 'private-vpc',
-      message: '',
-    });
-    setErrors({});
-    setIsSubmitted(false);
+    }, 1000);
   };
 
   return (
-    <section id="contact" className="py-24 border-b border-neutral-900 bg-black relative">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-          {/* Left Column: Context & Value Proposition */}
-          <div>
-            <div className="inline-flex items-center gap-1.5 text-xs font-mono text-emerald-400 uppercase tracking-widest mb-3">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-              Enterprise Consultation
-            </div>
-            <h2 className="text-3xl sm:text-5xl font-semibold tracking-tight text-white leading-tight">
-              Ready to scale autonomous engineering?
-            </h2>
-            <p className="mt-4 text-neutral-400 text-base sm:text-lg leading-relaxed">
-              Schedule a dedicated architecture session with our AI Systems Engineering team.
-              We'll discuss your security guardrails, private model requirements, and monorepo topology.
-            </p>
+    <section id="contact" className="py-24 border-b border-neutral-900 bg-[#020202] relative overflow-hidden">
+      {/* Subtle ambient glow */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute bottom-0 right-1/4 w-[600px] h-[300px] bg-emerald-950/15 blur-3xl rounded-full"
+      />
 
-            {/* Benefit Highlights */}
-            <div className="mt-10 space-y-5">
-              <div className="flex items-start gap-3">
-                <div className="p-2 rounded-lg bg-neutral-900 border border-neutral-800 text-emerald-400 shrink-0">
-                  <Shield className="w-4 h-4" />
-                </div>
-                <div>
-                  <h4 className="text-sm font-semibold text-white">Custom Threat Model Assessment</h4>
-                  <p className="text-xs text-neutral-400 mt-0.5">
-                    Evaluate sandbox isolation, AST indexing limits, and automated DLP rules for your proprietary IP.
-                  </p>
-                </div>
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+          {/* Left Column: Stealth Team Presence & Direct Email */}
+          <div className="lg:col-span-5 space-y-6">
+            <div>
+              <div className="inline-flex items-center gap-1.5 text-xs font-mono text-emerald-400 uppercase tracking-widest mb-3">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_#34d399]" />
+                Stealth Systems Group
               </div>
-
-              <div className="flex items-start gap-3">
-                <div className="p-2 rounded-lg bg-neutral-900 border border-neutral-800 text-emerald-400 shrink-0">
-                  <Building className="w-4 h-4" />
-                </div>
-                <div>
-                  <h4 className="text-sm font-semibold text-white">Dedicated Solutions Architect</h4>
-                  <p className="text-xs text-neutral-400 mt-0.5">
-                    Direct pairing with a Staff AI Engineer to build a proof-of-concept swarm for your stack.
-                  </p>
-                </div>
-              </div>
+              <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-white leading-tight">
+                Connect with the Core Engineering Team.
+              </h2>
+              <p className="mt-4 text-sm sm:text-base text-neutral-400 leading-relaxed">
+                Operating in stealth mode. We partner with select enterprise design partners, 
+                high-growth tech companies, and technical leaders who require deterministic,
+                sandboxed AI agent orchestration.
+              </p>
             </div>
 
-            <div className="mt-10 p-4 rounded-lg bg-neutral-950 border border-neutral-900 text-xs font-mono text-neutral-500">
-              Response SLA: Enterprise inquiries receive reply within <span className="text-emerald-400 font-medium">2 business hours</span>.
+            {/* Direct Email Card (Primary Contact Channel) */}
+            <div className="rounded-2xl border border-neutral-800 bg-[#070707] p-6 relative overflow-hidden shadow-lg">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-neutral-900 border border-neutral-800 flex items-center justify-center text-emerald-400">
+                    <Mail className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-mono uppercase text-neutral-500 tracking-wider">
+                      Official Contact Channel
+                    </span>
+                    <h3 className="text-sm font-semibold text-white">Direct Technical Line</h3>
+                  </div>
+                </div>
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              </div>
+
+              {/* Big Email Display */}
+              <div className="bg-black border border-neutral-850 rounded-xl p-4 flex items-center justify-between gap-3 mb-4">
+                <div className="font-mono text-base sm:text-lg font-bold text-white tracking-tight flex items-center gap-2 select-all">
+                  <span className="text-emerald-400">support</span>
+                  <span className="text-neutral-500">@</span>
+                  <span className="text-white">viezai.com</span>
+                </div>
+                <button
+                  onClick={handleCopyEmail}
+                  className="inline-flex items-center gap-1.5 rounded-md bg-neutral-900 hover:bg-neutral-800 border border-neutral-750 px-3 py-1.5 text-xs font-mono text-neutral-300 transition-colors"
+                >
+                  {copiedEmail ? (
+                    <>
+                      <Check className="w-3.5 h-3.5 text-emerald-400" />
+                      <span className="text-emerald-400">Copied</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-3.5 h-3.5" />
+                      <span>Copy</span>
+                    </>
+                  )}
+                </button>
+              </div>
+
+              {/* Direct Mailto Button */}
+              <a
+                href="mailto:support@viezai.com?subject=ViezAI%20Architecture%20Inquiry"
+                className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-neutral-900 hover:bg-neutral-850 border border-neutral-800 text-xs font-mono text-neutral-200 py-2.5 transition-all mb-4"
+              >
+                <Mail className="w-3.5 h-3.5 text-emerald-400" />
+                <span>Launch Email Client (mailto)</span>
+                <ExternalLink className="w-3 h-3 text-neutral-500" />
+              </a>
+
+              <div className="space-y-2 text-xs text-neutral-400 border-t border-neutral-900 pt-3">
+                <div className="flex items-center gap-2">
+                  <Lock className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                  <span>Strict NDA adherence. Confidential architectural reviews.</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Shield className="w-3.5 h-3.5 text-blue-400 shrink-0" />
+                  <span>Direct response from lead platform engineers within 24h.</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Confidential Team Statement */}
+            <div className="p-4 rounded-xl bg-neutral-950/60 border border-neutral-900 text-xs text-neutral-500 font-mono leading-relaxed">
+              <span className="text-neutral-400 font-semibold">// Stealth Note: </span>
+              We do not publish individual team identities. Inquiries are triaged directly by our core systems group via <strong className="text-neutral-300">support@viezai.com</strong>.
             </div>
           </div>
 
-          {/* Right Column: Interactive Form */}
-          <div className="rounded-2xl border border-neutral-800 bg-[#080808] p-6 sm:p-8 shadow-2xl">
-            {isSubmitted ? (
-              <div className="py-12 text-center space-y-4">
-                <div className="w-14 h-14 rounded-full bg-emerald-950/80 border border-emerald-500/50 text-emerald-400 flex items-center justify-center mx-auto">
-                  <CheckCircle2 className="w-8 h-8" />
+          {/* Right Column: Architectural Intake Form */}
+          <div className="lg:col-span-7">
+            <div className="rounded-2xl border border-neutral-800 bg-[#080808] p-6 sm:p-8">
+              {isSubmitted ? (
+                <div className="py-12 text-center space-y-4">
+                  <div className="w-12 h-12 rounded-full bg-emerald-950/80 border border-emerald-800 flex items-center justify-center mx-auto text-emerald-400">
+                    <CheckCircle2 className="w-6 h-6" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-white">Transmission Received</h3>
+                  <p className="text-sm text-neutral-400 max-w-md mx-auto leading-relaxed">
+                    Thank you, <strong className="text-white">{formData.fullName}</strong>. Your technical scope has been encrypted and dispatched to the platform leads. We will respond directly to <strong className="text-white">{formData.workEmail}</strong> within 24 hours.
+                  </p>
+                  <div className="pt-4">
+                    <button
+                      onClick={() => {
+                        setIsSubmitted(false);
+                        setFormData({
+                          fullName: '',
+                          workEmail: '',
+                          companyName: '',
+                          teamSize: '21-100',
+                          deploymentMode: 'private-vpc',
+                          message: '',
+                        });
+                      }}
+                      className="text-xs font-mono text-emerald-400 hover:text-emerald-300 underline"
+                    >
+                      Submit another inquiry
+                    </button>
+                  </div>
                 </div>
-                <h3 className="text-2xl font-semibold text-white tracking-tight">
-                  Consultation Request Received
-                </h3>
-                <p className="text-sm text-neutral-400 max-w-md mx-auto leading-relaxed">
-                  Thank you, <span className="text-white font-medium">{formData.fullName}</span>.
-                  A Senior AI Solutions Architect has been assigned to <span className="text-white font-medium">{formData.companyName}</span> and will reach out via <span className="text-emerald-400 font-mono">{formData.workEmail}</span>.
-                </p>
-                <div className="pt-4">
-                  <button
-                    onClick={handleReset}
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 text-xs font-medium text-white transition-colors"
-                  >
-                    Submit Another Inquiry
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-                <div>
-                  <label className="block text-xs font-medium text-neutral-300 mb-1.5 flex items-center gap-1.5">
-                    <User className="w-3.5 h-3.5 text-neutral-500" />
-                    Full Name *
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.fullName}
-                    onChange={(e) => {
-                      setFormData({ ...formData, fullName: e.target.value });
-                      if (errors.fullName) setErrors({ ...errors, fullName: undefined });
-                    }}
-                    placeholder="Jane Doe"
-                    className={`w-full rounded-md bg-black px-3.5 py-2.5 text-sm text-white placeholder-neutral-600 border transition-colors focus:outline-none ${
-                      errors.fullName
-                        ? 'border-red-500 focus:border-red-400'
-                        : 'border-neutral-800 focus:border-neutral-500'
-                    }`}
-                  />
-                  {errors.fullName && (
-                    <p className="mt-1 text-xs text-red-400 flex items-center gap-1">
-                      <AlertCircle className="w-3 h-3" />
-                      {errors.fullName}
+              ) : (
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div className="border-b border-neutral-850 pb-4 mb-4">
+                    <h3 className="text-lg font-semibold text-white">Architecture Consultation Request</h3>
+                    <p className="text-xs text-neutral-400 mt-1">
+                      Share your target deployment mode, scale, or reach out directly to <strong className="text-emerald-400 font-mono">support@viezai.com</strong>.
                     </p>
-                  )}
-                </div>
+                  </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {/* Full Name */}
+                    <div>
+                      <label className="block text-xs font-medium text-neutral-300 mb-1.5 flex items-center gap-1.5">
+                        <User className="w-3.5 h-3.5 text-neutral-500" />
+                        Full Name *
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.fullName}
+                        onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                        placeholder="e.g. Alex Thorne"
+                        className={`w-full rounded-md bg-black px-3.5 py-2.5 text-sm text-white placeholder-neutral-600 border ${
+                          errors.fullName ? 'border-red-500' : 'border-neutral-800'
+                        } focus:border-neutral-500 focus:outline-none`}
+                      />
+                      {errors.fullName && (
+                        <p className="text-[11px] text-red-400 mt-1 flex items-center gap-1">
+                          <AlertCircle className="w-3 h-3" />
+                          {errors.fullName}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Work Email */}
+                    <div>
+                      <label className="block text-xs font-medium text-neutral-300 mb-1.5 flex items-center gap-1.5">
+                        <Mail className="w-3.5 h-3.5 text-neutral-500" />
+                        Work Email *
+                      </label>
+                      <input
+                        type="email"
+                        value={formData.workEmail}
+                        onChange={(e) => setFormData({ ...formData, workEmail: e.target.value })}
+                        placeholder="alex@company.com"
+                        className={`w-full rounded-md bg-black px-3.5 py-2.5 text-sm text-white placeholder-neutral-600 border ${
+                          errors.workEmail ? 'border-red-500' : 'border-neutral-800'
+                        } focus:border-neutral-500 focus:outline-none`}
+                      />
+                      {errors.workEmail && (
+                        <p className="text-[11px] text-red-400 mt-1 flex items-center gap-1">
+                          <AlertCircle className="w-3 h-3" />
+                          {errors.workEmail}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {/* Company Name */}
+                    <div>
+                      <label className="block text-xs font-medium text-neutral-300 mb-1.5 flex items-center gap-1.5">
+                        <Building className="w-3.5 h-3.5 text-neutral-500" />
+                        Organization / Company *
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.companyName}
+                        onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
+                        placeholder="Acme Corp"
+                        className={`w-full rounded-md bg-black px-3.5 py-2.5 text-sm text-white placeholder-neutral-600 border ${
+                          errors.companyName ? 'border-red-500' : 'border-neutral-800'
+                        } focus:border-neutral-500 focus:outline-none`}
+                      />
+                      {errors.companyName && (
+                        <p className="text-[11px] text-red-400 mt-1 flex items-center gap-1">
+                          <AlertCircle className="w-3 h-3" />
+                          {errors.companyName}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Preferred Deployment Mode */}
+                    <div>
+                      <label className="block text-xs font-medium text-neutral-300 mb-1.5">
+                        Target Harness Deployment
+                      </label>
+                      <select
+                        value={formData.deploymentMode}
+                        onChange={(e) => setFormData({ ...formData, deploymentMode: e.target.value })}
+                        className="w-full rounded-md bg-black px-3.5 py-2.5 text-sm text-white border border-neutral-800 focus:border-neutral-500 focus:outline-none"
+                      >
+                        <option value="private-vpc">Dedicated Private Cloud VPC</option>
+                        <option value="on-prem">Air-Gapped / On-Premises Host</option>
+                        <option value="cluster-connect">Distributed Node Mesh (connect-runtime.sh)</option>
+                        <option value="kanban-workspace">ViezAgent Kanban Workspace Deployment</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Message / Technical Scope */}
                   <div>
                     <label className="block text-xs font-medium text-neutral-300 mb-1.5 flex items-center gap-1.5">
-                      <Mail className="w-3.5 h-3.5 text-neutral-500" />
-                      Work Email *
+                      <MessageSquare className="w-3.5 h-3.5 text-neutral-500" />
+                      Technical Scope & Objectives (Optional)
                     </label>
-                    <input
-                      type="email"
-                      value={formData.workEmail}
-                      onChange={(e) => {
-                        setFormData({ ...formData, workEmail: e.target.value });
-                        if (errors.workEmail) setErrors({ ...errors, workEmail: undefined });
-                      }}
-                      placeholder="jane@company.com"
-                      className={`w-full rounded-md bg-black px-3.5 py-2.5 text-sm text-white placeholder-neutral-600 border transition-colors focus:outline-none ${
-                        errors.workEmail
-                          ? 'border-red-500 focus:border-red-400'
-                          : 'border-neutral-800 focus:border-neutral-500'
-                      }`}
+                    <textarea
+                      rows={3}
+                      value={formData.message}
+                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                      placeholder="Tell us about your target agent workflows, preferred Harness runtimes (Claude, Codex, DeepSeek), or custom MCP servers..."
+                      className="w-full rounded-md bg-black px-3.5 py-2 text-sm text-white placeholder-neutral-600 border border-neutral-800 focus:border-neutral-500 focus:outline-none resize-none"
                     />
-                    {errors.workEmail && (
-                      <p className="mt-1 text-xs text-red-400 flex items-center gap-1">
-                        <AlertCircle className="w-3 h-3" />
-                        {errors.workEmail}
-                      </p>
-                    )}
                   </div>
 
-                  <div>
-                    <label className="block text-xs font-medium text-neutral-300 mb-1.5 flex items-center gap-1.5">
-                      <Building className="w-3.5 h-3.5 text-neutral-500" />
-                      Company Name *
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.companyName}
-                      onChange={(e) => {
-                        setFormData({ ...formData, companyName: e.target.value });
-                        if (errors.companyName) setErrors({ ...errors, companyName: undefined });
-                      }}
-                      placeholder="Acme Corp"
-                      className={`w-full rounded-md bg-black px-3.5 py-2.5 text-sm text-white placeholder-neutral-600 border transition-colors focus:outline-none ${
-                        errors.companyName
-                          ? 'border-red-500 focus:border-red-400'
-                          : 'border-neutral-800 focus:border-neutral-500'
-                      }`}
-                    />
-                    {errors.companyName && (
-                      <p className="mt-1 text-xs text-red-400 flex items-center gap-1">
-                        <AlertCircle className="w-3 h-3" />
-                        {errors.companyName}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-medium text-neutral-300 mb-1.5">
-                      Engineering Team Size
-                    </label>
-                    <select
-                      value={formData.teamSize}
-                      onChange={(e) => setFormData({ ...formData, teamSize: e.target.value })}
-                      className="w-full rounded-md bg-black px-3.5 py-2.5 text-sm text-white border border-neutral-800 focus:border-neutral-500 focus:outline-none"
+                  <div className="pt-2">
+                    <button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="w-full inline-flex items-center justify-center gap-2 rounded-md bg-white py-3 text-sm font-medium text-black transition-all hover:bg-neutral-200 active:scale-[0.98] disabled:opacity-50"
                     >
-                      <option value="1-20">1 - 20 engineers</option>
-                      <option value="21-100">21 - 100 engineers</option>
-                      <option value="101-500">101 - 500 engineers</option>
-                      <option value="500+">500+ engineers</option>
-                    </select>
+                      {isSubmitting ? (
+                        <>
+                          <span className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                          <span>Dispatching to core leads...</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>Transmit Consultation Request</span>
+                          <Send className="w-3.5 h-3.5" />
+                        </>
+                      )}
+                    </button>
                   </div>
 
-                  <div>
-                    <label className="block text-xs font-medium text-neutral-300 mb-1.5">
-                      Preferred Deployment Mode
-                    </label>
-                    <select
-                      value={formData.deploymentMode}
-                      onChange={(e) => setFormData({ ...formData, deploymentMode: e.target.value })}
-                      className="w-full rounded-md bg-black px-3.5 py-2.5 text-sm text-white border border-neutral-800 focus:border-neutral-500 focus:outline-none"
-                    >
-                      <option value="private-vpc">Dedicated Private VPC</option>
-                      <option value="on-prem">Air-Gapped / On-Premises</option>
-                      <option value="cloud-saas">Enterprise Cloud SaaS</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-medium text-neutral-300 mb-1.5 flex items-center gap-1.5">
-                    <MessageSquare className="w-3.5 h-3.5 text-neutral-500" />
-                    Project Scope & Objectives (Optional)
-                  </label>
-                  <textarea
-                    rows={3}
-                    value={formData.message}
-                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                    placeholder="Tell us about your current monorepo structure, languages, or AI agent objectives..."
-                    className="w-full rounded-md bg-black px-3.5 py-2 text-sm text-white placeholder-neutral-600 border border-neutral-800 focus:border-neutral-500 focus:outline-none resize-none"
-                  />
-                </div>
-
-                <div className="pt-2">
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="w-full inline-flex items-center justify-center gap-2 rounded-md bg-white py-3 text-sm font-medium text-black transition-all hover:bg-neutral-200 active:scale-[0.98] disabled:opacity-50"
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <span className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
-                        <span>Validating and submitting...</span>
-                      </>
-                    ) : (
-                      <>
-                        <span>Request Architecture Consultation</span>
-                        <Send className="w-3.5 h-3.5" />
-                      </>
-                    )}
-                  </button>
-                </div>
-
-                <p className="text-[11px] text-neutral-500 text-center font-mono pt-1">
-                  We respect NDA agreements. No customer code or prompt data is ever retained.
-                </p>
-              </form>
-            )}
+                  <p className="text-[11px] text-neutral-500 text-center font-mono pt-1">
+                    Direct inquiries can also be routed to <a href="mailto:support@viezai.com" className="text-emerald-400 hover:underline">support@viezai.com</a>
+                  </p>
+                </form>
+              )}
+            </div>
           </div>
         </div>
       </div>

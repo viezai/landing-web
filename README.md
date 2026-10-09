@@ -1,164 +1,55 @@
-# ViezAI — Enterprise AI Agents Orchestration Platform
+﻿# ViezAI — Enterprise AI Agent Platform
 
-> **viezai.com** — Production-grade Landing Page for ViezAI, specialized in autonomous multi-agent orchestration, deterministic software delivery pipelines, and enterprise-grade guardrails.
-
----
-
-## ✦ Design Aesthetics & Tone
-
-Designed following the modern, minimalist aesthetic inspired by **OpenAI**:
-- **Palette**: Pitch Black backdrop (`#000000`, `#080808`, `#0c0c0c`), ultra-thin neutral borders (`#262626`, `#1f1f1f`), subtle emerald and white glows.
-- **Typography**: Clean, geometric sans-serif hierarchy powered by *Inter* & *JetBrains Mono* for telemetry and terminal outputs.
-- **Interactivity**: Micro-animations, live log streaming, multi-agent status transitions, and client-side validated lead capture.
-- **Performance**: Zero bulky runtime dependencies; built with Vite, React 19, TypeScript, and Tailwind CSS v4 for blazing-fast load times.
+> **viezai.com** — Production-grade Landing Page for ViezAI, showcasing the **Harness Agent Architecture**, the **viezagent** Platform Hub, and the **viezagent-kanban** Agent Teams Workspace.
 
 ---
 
-## 🏛️ Page Sections & Architecture
+## ✦ Core Architecture: The Harness Agent Paradigm
 
-1. **Header / Navigation (`Navbar.tsx`)**:
-   - Modern geometric brand mark & version pill (`v2.4`).
-   - Smooth anchor navigation: Solutions, Capabilities, Architecture, Metrics, Contact.
-   - Quick GitHub repo link and "Book a Demo" modal trigger.
-   - Responsive mobile navigation with backdrop blur.
-
-2. **Hero Section (`Hero.tsx`)**:
-   - Status badge: `ViezAI Swarm v2.4 — Deterministic Multi-Agent Runtime`.
-   - Clear value proposition: *"Enterprise AI Agents Orchestration Platform"*.
-   - Dual Call-to-Action: Primary direct booking + secondary interactive swarm simulator trigger.
-   - Enterprise assurance badges: 99.4% CI first-pass rate, SOC2 Type II, Zero data retention in transit, Self-hosted VPC native.
-
-3. **Multi-Agent Orchestration Simulator (`AgentSimulator.tsx`)**:
-   - Interactive visual canvas demonstrating how the Orchestrator coordinates 4 specialized agents:
-     - `@planner (Shikamaru)`: Task graph decomposition (DAG).
-     - `@coder (Kakashi)`: Isolated git worktree surgical changes & TDD.
-     - `@reviewer (Neji)`: Security static audit & guardrail enforcement.
-     - `@executor (Minato)`: Canary deployment & telemetry flush.
-   - Switchable task presets (*Refactor*, *Security Audit*, *A2A Migration*).
-   - Real-time animated status transitions (Pending -> Running -> Verified -> Shipped).
-
-4. **Core Solutions Bento Grid (`BentoGrid.tsx`)**:
-   - 4-card asymmetric bento layout:
-     - *Autonomous Multi-Agent Swarms* (A2A protocol, subagent fan-out, ephemeral worktrees).
-     - *Private LLM & VPC Isolation* (Air-gapped VPC, DLP PII redaction, mTLS encryption).
-     - *Enterprise Integration Engine* (GitHub, GitLab, Jira, Linear, Postgres, Snowflake, Datadog).
-     - *Real-Time Observability & Continuous Evaluation* (OpenTelemetry traces, reasoning steps, automated regression suites).
-
-5. **Interactive Agent Showcase (`InteractiveTerminal.tsx`)**:
-   - Monospace developer console with tab switching across agent roles.
-   - One-click live log streaming simulation with realistic execution timestamps and log levels (`agent`, `info`, `success`).
-   - Command snippet copy-to-clipboard functionality.
-
-6. **Why ViezAI / 4-Stage Architecture (`Architecture.tsx`)**:
-   - Systematic breakdown of the ViezAI execution lifecycle:
-     - `01. Ingest`: Knowledge graph, AST mapping, and hybrid semantic retrieval.
-     - `02. Plan`: Deterministic Directed Acyclic Graph (DAG) with token ceilings.
-     - `03. Execute`: Isolated ephemeral git worktrees in gVisor sandboxes.
-     - `04. Guardrails`: Adversarial dual-skeptic verification and zero-leakage security gates.
-
-7. **Enterprise Benchmarks & Compliance (`Metrics.tsx`)**:
-   - 10M+ Tasks executed autonomously.
-   - 99.4% CI first-pass success rate.
-   - 12x Faster cycle from spec to production pull request.
-   - < 45ms Orchestration overhead.
-
-8. **Lead Capture & Consultation Form (`ContactSection.tsx` & `ContactModal.tsx`)**:
-   - Enterprise consultation booking form.
-   - Client-side validation: Full Name, Business Email format, Company Name, Team Size, Deployment Mode.
-   - Simulated 2-hour SLA response feedback and success state.
-   - Reusable popup modal triggerable from anywhere on the page.
-
-9. **Footer (`Footer.tsx`)**:
-   - Comprehensive site map, resources, and compliance certifications.
-   - Real-time pulsing system status: *"All Systems Operational (99.99%)"*.
+The fundamental innovation behind ViezAI is **decoupling agent cognition from execution**:
+- **Central Platform Hub (`viezagent`)**: Consumer apps connect with 1 base URL and 1 API key via an OpenAI-wire facade (`POST /v1/chat/completions` with `model: "<agent-key>"`). Prompts, skills, memory, and LLM credentials reside in the platform, never in consumer apps.
+- **Swappable Harness Runtimes**: Execution is delegated to dedicated runtime adapter containers:
+  - `claude_runtime`: Claude Code via Anthropic Agent SDK with tool allowlists & transcript resumption.
+  - `codex_runtime`: OpenAI Codex via `codex app-server` (Responses API) with surgical diff patches.
+  - `dsh_runtime`: DeepSeek Harness with dedicated shell and filesystem workspaces.
+  - `antigravity_runtime`: Google Antigravity SDK & `localharness` binary with isolated workspaces.
+  - `pi_runtime`: Ultra-lightweight sub-1k token RPC runner.
+- **viezagent-kanban**: Collaborative Trello-style workboards combined with roleplay group chat, coordinating agent teams over the **A2A (Agent-to-Agent)** JSON-RPC protocol and **ACP (Agent Client Protocol)**.
+- **Bring-Your-Own MCP**: Consumer apps provide user MCP tools dynamically per turn with zero platform credential storage.
+- **One-Command Node Connect**: Attach any remote server or GPU node via `connect-runtime.sh`.
 
 ---
 
-## 🛠️ Tech Stack
+## 🏛️ Ecosystem Projects
 
-- **Framework**: [React 19](https://react.dev/) + [Vite 6](https://vitejs.dev/)
-- **Language**: [TypeScript 5+](https://www.typescriptlang.org/)
-- **Styling**: [Tailwind CSS v4](https://tailwindcss.com/) with `@tailwindcss/vite`
-- **Icons**: [Lucide React](https://lucide.dev/)
-- **Testing**: [Vitest](https://vitest.dev/)
-- **CI/CD**: GitHub Actions (`.github/workflows/ci.yml`)
+| Project | Location | Focus |
+|---|---|---|
+| **viezagent** | `E:\develops\viezagent` | Enterprise Platform Hub, FastAPI + MongoDB, Admin Web, Chat UI, Master Agent Gaia (`gaia`), and Harness Adapters. |
+| **viezagent-kanban** | `E:\develops\viezagent-kanban` | Agent Teams Workspace, Next.js 14 App Router, Prisma SQLite, A2A JSON-RPC protocol bus. |
+| **landing-web** | `E:\develops\landing-web` | Public welcome and enterprise showcase portal for ViezAI. |
 
 ---
 
-## 🚀 Getting Started
+## 🔒 Stealth Engineering Collective & Inquiries
 
-### Prerequisites
-- Node.js 20.x or higher
-- npm, pnpm, or yarn
+Built in stealth by the ViezAI Core Systems Group. Direct all partnership, architecture, and deployment inquiries to:
 
-### Installation
+**`support@viezai.com`**
+
+---
+
+## 🚀 Development & Build
+
 ```bash
-# Clone the repository
-git clone https://github.com/viezai/landing-web.git
-cd landing-web
-
 # Install dependencies
 npm install
-```
 
-### Local Development
-```bash
+# Run typecheck and vitest suite
+npm test
+
+# Build production bundle
+npm run build
+
+# Start local dev server
 npm run dev
 ```
-Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-### Typecheck & Unit Tests
-```bash
-# Run TypeScript validation and Vitest test suite
-npm test
-```
-
-### Production Build
-```bash
-npm run build
-```
-The optimized static build will be generated in the `dist/` directory, ready to deploy to any CDN or web server (Vercel, Cloudflare Pages, AWS CloudFront, Nginx).
-
-### Preview Production Build
-```bash
-npm run preview
-```
-
----
-
-## 📦 Deployment
-
-### Run with Docker / GitHub Container Registry (GHCR)
-The repository automatically builds and publishes production multi-platform images (`linux/amd64`, `linux/arm64`) to **GitHub Container Registry (GHCR)** on every push to `main`.
-
-```bash
-# Pull the latest container image from GHCR
-docker pull ghcr.io/viezai/landing-web:latest
-
-# Run containerized Nginx web server
-docker run -d --name viezai-landing -p 8080:80 ghcr.io/viezai/landing-web:latest
-
-# Check health endpoint
-curl http://localhost:8080/healthz
-```
-
-### Build Docker Image Locally
-```bash
-# Build production multi-stage image
-docker build -t viezai-landing-web .
-
-# Run locally
-docker run -d -p 8080:80 viezai-landing-web
-```
-
-### Deploy to Vercel / Cloudflare Pages / Static CDN
-Since ViezAI Landing Web builds into a pure static export (`dist/`), it can also be deployed with zero backend configuration:
-- **Build Command**: `npm run build`
-- **Output Directory**: `dist`
-- **Node Version**: 20.x
-
----
-
-## 🛡️ License
-
-Copyright © 2026 ViezAI, Inc. All rights reserved.
